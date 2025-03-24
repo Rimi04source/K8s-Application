@@ -16,31 +16,48 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Set up JDK 11
       uses: actions/setup-java@v2
       with:
         java-version: '11'
         distribution: 'adopt'
         cache: gradle
+
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+
     - name: Build with Gradle
       run: ./gradlew build
+
     - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@master
       with:
         sonar.projectKey: CICD_Java_gradle_application
+        sonar.projectName: CICD Java Gradle Application
+        sonar.projectVersion: 1.0
+        sonar.sources: src
+        sonar.java.binaries: build/classes/java/main
+        sonar.exclusions: build/**
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         SONAR_SCANNER_OPTS: "-X"  # Enable debug mode in the scanner
 
+    - name: Wait for SonarQube analysis to complete
+      run: |
+        while [ ! -f .scannerwork/report-task.txt ]; do
+          echo "Waiting for SonarQube analysis to complete..."
+          sleep 15
+        done
+
     - name: SonarQube Quality Gate check
       uses: sonarsource/sonarqube-quality-gate-action@master
-      # Force to fail step after specific time
-      timeout-minutes: 5
+      timeout-minutes: 10
+      with:
+        sonar.projectKey: CICD_Java_gradle_application
       env:
-       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     # - name: Install Datree
     #   run: curl https://get.datree.io | /bin/bash
         
