@@ -44,11 +44,6 @@ jobs:
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         SONAR_SCANNER_OPTS: "-X"  # Enable debug mode in the scanner
 
-    - name: List .scannerwork directory
-      run: |
-        ls -l .scannerwork
-        cat .scannerwork/report-task.txt || echo "No report-task.txt found.
-
     - name: SonarQube Quality Gate check
       uses: sonarsource/sonarqube-quality-gate-action@master
       timeout-minutes: 10
