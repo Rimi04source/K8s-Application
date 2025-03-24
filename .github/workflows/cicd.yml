@@ -28,10 +28,11 @@ jobs:
     #   run: ./gradlew build
     - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@master
+      with:
+        sonar.projectKey: CICD_Java_gradle_application
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        SONAR_PROJECT_KEY: CICD_Java_gradle_application
     - name: SonarQube Quality Gate check
       uses: sonarsource/sonarqube-quality-gate-action@master
       # Force to fail step after specific time
