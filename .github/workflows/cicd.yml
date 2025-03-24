@@ -44,12 +44,10 @@ jobs:
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         SONAR_SCANNER_OPTS: "-X"  # Enable debug mode in the scanner
 
-    - name: Wait for SonarQube analysis to complete
+    - name: List .scannerwork directory
       run: |
-        while [ ! -f .scannerwork/report-task.txt ]; do
-          echo "Waiting for SonarQube analysis to complete..."
-          sleep 15
-        done
+        ls -l .scannerwork
+        cat .scannerwork/report-task.txt || echo "No report-task.txt found.
 
     - name: SonarQube Quality Gate check
       uses: sonarsource/sonarqube-quality-gate-action@master
